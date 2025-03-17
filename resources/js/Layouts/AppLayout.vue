@@ -4,7 +4,7 @@ import Container from "@/Components/Container.vue";
 
 <template>
     <div class="min-h-screen bg-gray-50 flex">
-        <Container as="main" class="max-w-4xl mt-10">
+        <Container as="main" class="max-w-2xl mt-10">
             <slot />
         </Container>
     </div>

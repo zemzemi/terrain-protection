@@ -1,109 +1,73 @@
-<script setup>
-import {
-    defineProps,
-    defineEmits,
-    defineExpose,
-    onMounted,
-    ref,
-    computed,
-} from "vue";
+<script lang="ts" setup>
+import { defineProps, withDefaults, defineEmits, ref, computed } from "vue";
 import FormLabel from "./FormLabel.vue";
 import FormErrorMessage from "./FormErrorMessage.vue";
 import { v4 as uuid } from "uuid";
 
-const props = defineProps({
-    id: {
-        type: String,
-        default() {
-            return `textarea-${uuid()}`;
-        },
-    },
-    label: {
-        type: String,
-        required: true,
-    },
-    value: {
-        type: String || Number,
-        default: "",
-    },
-    type: {
-        type: String,
-        default: "text",
-    },
-    modelValue: {
-        type: String || Number,
-        required: true,
-    },
-    required: {
-        type: Boolean,
-        default: false,
-    },
-    disabled: {
-        type: Boolean,
-        default: false,
-    },
-    autocomplete: {
-        type: String,
-        default: "",
-    },
-    placeholder: {
-        type: String,
-        default: "",
-    },
-    helper: {
-        type: String,
-        default: "",
-    },
-    error: {
-        type: String,
-        default: "",
-    },
+interface IFormTextInputProps {
+    id?: string;
+    label: string;
+    modelValue: string | number;
+    type?: string;
+    required?: boolean;
+    disabled?: boolean;
+    placeholder?: string;
+    helper?: string;
+    error?: string;
+}
+
+const props = withDefaults(defineProps<IFormTextInputProps>(), {
+    id: () => `textarea-${uuid()}`,
+    type: "text",
+    required: false,
+    disabled: false,
+    placeholder: "",
+    helper: "",
+    error: "",
 });
 
-defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue"]);
 
-const input = ref(null);
+const input = ref<HTMLInputElement | null>(null);
+const hasError = computed(() => props.error !== "");
+const errorMessage = computed(() => props.error);
 const inputClasses = computed(() => ({
     "text-input": true,
     "text-input-error": hasError.value,
 }));
+
 const textLabel = computed(() =>
     props.required ? `${props.label}*` : props.label,
 );
-const hasError = computed(() => props.error !== "");
-const errorMessage = computed(() => props.error);
-
-onMounted(() => {
-    if (input.value.hasAttribute("autofocus")) {
-        input.value.focus();
-    }
-});
-
-defineExpose({ focus: () => input.value.focus() });
 </script>
 
 <template>
     <div>
-        <form-label class="mb-1" :label="textLabel" :for="id" />
+        <FormLabel class="mb-1" :label="textLabel" :for="id" />
 
         <input
             :id="id"
             ref="input"
             :type="type"
             :class="inputClasses"
-            :value="modelValue || value"
-            :autocomplete="autocomplete"
+            :value="modelValue"
             :placeholder="placeholder"
             :required="required"
             :disabled="disabled"
-            @input="$emit('update:modelValue', $event.target.value)"
+            @input="
+                ($event: Event) =>
+                    emit(
+                        'update:modelValue',
+                        ($event.target as HTMLInputElement).value,
+                    )
+            "
         />
 
         <p v-if="helper" class="my-2 text-sm text-gray-400">
             {{ helper }}
         </p>
 
-        <form-error-message
+        <FormErrorMessage
             class="mt-2"
             :has-error="hasError"
             :message="errorMessage"

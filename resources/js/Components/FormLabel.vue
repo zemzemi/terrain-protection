@@ -1,10 +1,7 @@
 <script lang="ts" setup>
-defineProps({
-    label: {
-        type: String,
-        required: true,
-    },
-});
+defineProps<{
+    label: string;
+}>();
 </script>
 
 <template>

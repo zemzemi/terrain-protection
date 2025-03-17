@@ -17,7 +17,7 @@ Avant d’installer le projet, assurez-vous d’avoir installé :
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### Cloner le projet
 
@@ -140,4 +140,4 @@ Ou si vous utilisez Sail :
 
 Ce projet est sous licence MIT.
 
-🚀 **Développé avec ❤️ et Laravel + Vue.js + Inertia.js + Sail**
+**Développé avec ❤️ et Laravel + Vue.js + Inertia.js + Sail**

@@ -1,68 +1,32 @@
-<script setup>
-import {
-    defineProps,
-    defineEmits,
-    defineExpose,
-    onMounted,
-    ref,
-    computed,
-} from "vue";
+<script lang="ts" setup>
+import { withDefaults, defineProps, defineEmits, ref, computed } from "vue";
 import FormLabel from "./FormLabel.vue";
 import FormErrorMessage from "./FormErrorMessage.vue";
 import { v4 as uuid } from "uuid";
 
-const props = defineProps({
-    id: {
-        type: String,
-        default() {
-            return `textarea-${uuid()}`;
-        },
-    },
-    label: {
-        type: String,
-        required: true,
-    },
-    value: {
-        type: String || Number,
-        default: "",
-    },
-    type: {
-        type: String,
-        default: "text",
-    },
-    modelValue: {
-        type: String || Number,
-        required: true,
-    },
-    required: {
-        type: Boolean,
-        default: false,
-    },
-    disabled: {
-        type: Boolean,
-        default: false,
-    },
-    autocomplete: {
-        type: String,
-        default: "",
-    },
-    placeholder: {
-        type: String,
-        default: "",
-    },
-    helper: {
-        type: String,
-        default: "",
-    },
-    error: {
-        type: String,
-        default: "",
-    },
+interface IFormTextInputProps {
+    id?: string;
+    label: string;
+    modelValue: string | number;
+    type?: string;
+    required?: boolean;
+    disabled?: boolean;
+    helper?: string;
+    error?: string | string[];
+}
+
+const props = withDefaults(defineProps<IFormTextInputProps>(), {
+    id: () => `textarea-${uuid()}`,
+    type: "text",
+    required: false,
+    disabled: false,
+    helper: "",
+    error: "",
 });
 
 defineEmits(["update:modelValue"]);
 
-const input = ref(null);
+const input = ref<HTMLInputElement | null>(null);
 const inputClasses = computed(() => ({
     "text-input": true,
     "text-input-error": hasError.value,
@@ -72,14 +36,6 @@ const textLabel = computed(() =>
 );
 const hasError = computed(() => props.error !== "");
 const errorMessage = computed(() => props.error);
-
-onMounted(() => {
-    if (input.value.hasAttribute("autofocus")) {
-        input.value.focus();
-    }
-});
-
-defineExpose({ focus: () => input.value.focus() });
 </script>
 
 <template>

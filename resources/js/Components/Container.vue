@@ -1,10 +1,16 @@
 <script lang="ts" setup>
-defineProps({
-    as: {
-        type: String,
-        default: "section",
+import { defineProps, withDefaults } from "vue";
+
+type ContainerAsType = "section" | "main" | "div";
+
+withDefaults(
+    defineProps<{
+        as: ContainerAsType;
+    }>(),
+    {
+        as: "section",
     },
-});
+);
 </script>
 
 <template>

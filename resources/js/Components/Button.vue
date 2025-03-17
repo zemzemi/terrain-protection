@@ -1,33 +1,33 @@
 <script lang="ts" setup>
-defineProps({
-    type: {
-        type: String,
-        default: "default",
+import { defineProps, withDefaults } from "vue";
+
+type ButtonType = "default" | "primary" | "secondary" | "danger" | "submit";
+type ButtonSize = "sm" | "md";
+
+const props = withDefaults(
+    defineProps<{
+        type?: ButtonType;
+        size?: ButtonSize;
+        processing?: boolean;
+    }>(),
+    {
+        type: "primary",
+        size: "md",
+        processing: false,
     },
-    size: {
-        type: String,
-        default: "md",
-    },
-    processing: {
-        type: Boolean,
-    },
-});
+);
 </script>
 
 <template>
     <button
-        :class="{
-            'btn-md': size === 'md',
-            'btn-sm': size === 'sm',
-            'btn-default': type === 'default',
-            'btn-primary': type === 'primary' || type === 'submit',
-            'btn-secondary': type === 'secondary',
-            'btn-danger': type === 'danger',
-            'opacity-25': processing,
-        }"
-        :type="type === 'submit' ? 'submit' : 'button'"
-        :disabled="processing"
-        class="btn"
+        :class="[
+            'btn',
+            `btn-${props.size}`,
+            `btn-${props.type}`,
+            { 'opacity-25': props.processing },
+        ]"
+        :type="props.type === 'submit' ? 'submit' : 'button'"
+        :disabled="props.processing"
     >
         <slot />
     </button>
@@ -46,7 +46,8 @@ defineProps({
 .btn-default {
     @apply bg-gray-600 hover:bg-gray-700 focus:bg-gray-700 focus:ring-gray-500 active:bg-gray-900;
 }
-.btn-primary {
+.btn-primary,
+.btn-submit {
     @apply bg-indigo-600 hover:bg-indigo-700 focus:bg-indigo-700 focus:ring-indigo-500 active:bg-indigo-900;
 }
 .btn-secondary {

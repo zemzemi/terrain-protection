@@ -1,31 +1,22 @@
 <script lang="ts" setup>
-import { useForm, usePage } from "@inertiajs/vue3";
+import { useForm } from "@inertiajs/vue3";
 import FormTextInput from "@/Components/FormTextInput.vue";
 import FormTextField from "@/Components/FormTextField.vue";
 import BaseButton from "@/Components/Button.vue";
-import { computed } from "vue";
+import { defineProps, computed } from "vue";
 
-const props = defineProps({
-    width: {
-        type: String || Number,
-        default: 0,
-    },
-    altitudes: {
-        type: String,
-        default: "",
-    },
-    result: {
-        type: Number,
-        default: 0,
-    },
-});
+interface Props {
+    result: number | null;
+}
+
+const props = defineProps<Props>();
 
 const form = useForm({
-    width: props.width,
-    altitudes: props.altitudes,
+    width: "",
+    altitudes: "",
 });
 
-const submitForm = () => {
+const submitForm = async () => {
     form.post(route("terrain-protection.calculate"), {
         preserveState: true,
     });
@@ -36,11 +27,7 @@ const protectedArea = computed(() => {
         return "Calculating...";
     }
 
-    if (props.result) {
-        return props.result;
-    }
-
-    return null;
+    return props.result ?? null;
 });
 </script>
 
@@ -56,7 +43,7 @@ const protectedArea = computed(() => {
         <FormTextInput
             id="width"
             v-model="form.width"
-            label="Width:"
+            label="Width"
             required
             type="number"
             placeholder="Example: 5"
@@ -66,9 +53,8 @@ const protectedArea = computed(() => {
         <FormTextField
             id="altitudes"
             v-model="form.altitudes"
-            label="Altitudes:"
+            label="Altitudes"
             required
-            placeholder="Example: 30 27 17 42 29"
             :error="form.errors.altitudes"
         />
 
@@ -79,7 +65,7 @@ const protectedArea = computed(() => {
 
     <div
         v-if="protectedArea !== null"
-        class="mt-4 bg-white shadow p-6 rounded text-gray-900 rounded-md"
+        class="mt-4 bg-white shadow p-6 rounded text-gray-900"
     >
         <strong>Protected Area:</strong> {{ protectedArea }}
     </div>
